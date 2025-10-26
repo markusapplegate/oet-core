@@ -182,22 +182,28 @@ Good examples:
 
 ```
 oet-core/
-├── src/                    # Source code
-│   ├── oet_core/          # Package modules
-│   │   ├── __init__.py    # Package exports
-│   │   ├── algos.py       # Algorithm implementations
-│   │   └── utils.py       # Utility helpers
-│   ├── __init__.py        # Compatibility shim
-│   └── utils.py           # Compatibility shim
-├── tests/                 # Test suite
-│   ├── test_algos.py      # Algorithm tests
-│   ├── test_utils.py      # Utility tests
-│   └── run_all_tests.py   # Test runner
-├── requirements.txt       # Development dependencies
+├── README.md              # Project overview
 ├── docs/
-│   └── API_DOCS.md       # Library documentation
-├── README.md             # Project overview
-└── CONTRIBUTING.md       # This guide
+│   ├── API_DOCS.md        # Complete API documentation
+│   └── MINTEXT_GUIDE.md   # MinText quick reference
+├── CONTRIBUTING.md        # This file
+├── LICENSE                # MIT License
+├── requirements.txt       # Development dependencies
+├── pyproject.toml         # Package metadata
+├── src/
+│   ├── oet_core/
+│   │   ├── __init__.py    # Package exports
+│   │   ├── algos.py       # Algorithm implementations (binary_search, HashMap)
+│   │   ├── mintext.py     # Text analysis (Text, Corpus)
+│   │   └── utils.py       # Utility helpers (Matrix, SQLite, logging, graphs)
+│   ├── __init__.py        # Compatibility shim for legacy imports
+│   └── utils.py           # Compatibility shim for legacy imports
+└── tests/
+    ├── __init__.py        # Test package
+    ├── test_algos.py      # Algorithm tests
+    ├── test_mintext.py    # MinText tests
+    ├── test_utils.py      # Utility tests
+    └── run_all_tests.py   # Test runner
 ```
 
 ## API Design Guidelines
