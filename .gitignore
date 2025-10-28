@@ -232,4 +232,4 @@ test.db
 # API keys and secrets (just in case)
 secrets.json
 .secrets
-api_keys.txt
+api_keys.txtRELEASE_INSTRUCTIONS.md

@@ -56,6 +56,8 @@ git checkout -b feature/your-feature-name
 
 3. **Add tests** for your changes in the appropriate test file:
    - `tests/test_algos.py` for algorithm changes
+   - `tests/test_mintext.py` for text analysis changes
+   - `tests/test_symbolics.py` for symbolic mathematics changes
    - `tests/test_utils.py` for utility changes
 
 4. **Run the test suite:**
@@ -195,6 +197,7 @@ oet-core/
 │   │   ├── __init__.py    # Package exports
 │   │   ├── algos.py       # Algorithm implementations (binary_search, HashMap)
 │   │   ├── mintext.py     # Text analysis (Text, Corpus)
+│   │   ├── symbolics.py   # Symbolic mathematics (SymbolicExpression, SymbolicSolver, FormulaLibrary)
 │   │   └── utils.py       # Utility helpers (Matrix, SQLite, logging, graphs)
 │   ├── __init__.py        # Compatibility shim for legacy imports
 │   └── utils.py           # Compatibility shim for legacy imports
@@ -202,6 +205,7 @@ oet-core/
     ├── __init__.py        # Test package
     ├── test_algos.py      # Algorithm tests
     ├── test_mintext.py    # MinText tests
+    ├── test_symbolics.py  # Symbolic mathematics tests
     ├── test_utils.py      # Utility tests
     └── run_all_tests.py   # Test runner
 ```

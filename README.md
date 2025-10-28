@@ -30,11 +30,19 @@ Originally developed to support the Outer Element Taxonomy research framework, t
 **Data Modeling**
 - **Graph Generation**: Build NetworkX graphs programmatically for relationship modeling
 
+**Symbolic Mathematics (Symbolics)**
+- **SymbolicExpression**: Expression manipulation, simplification, expansion, factoring
+- **Calculus**: Differentiation, integration, limits, Taylor series
+- **SymbolicSolver**: Solve algebraic equations, systems of equations, and ODEs
+- **FormulaLibrary**: SQLite-based formula storage with tagging and search
+- **Formula Validation**: Parse and validate mathematical expressions
+- **Matrix Integration**: Symbolic determinants, inverses, and conversions to/from SymPy matrices
+
 **Observability**
 - **Logging Helpers**: Lightweight logger factory and inline logging with opt-in verbosity
 
 **Quality**
-- **Well Tested**: 125+ tests covering algorithms, edge cases, and error handling
+- **Well Tested**: 140+ tests covering algorithms, edge cases, and error handling
 
 ## Quick Start
 
@@ -56,6 +64,7 @@ pip install -e .[dev,all]
 
 ```python
 from oet_core import binary_search, HashMap, Matrix, SQLiteHelper, Text, Corpus
+from oet_core import SymbolicExpression, SymbolicSolver, FormulaLibrary
 
 # Binary search
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -96,6 +105,57 @@ with SQLiteHelper(":memory:") as db:
     corpus.save_to_db(db, table="reviews")  # Persist to SQLite
     loaded = Corpus.load_from_db(db, table="reviews")
 
+# Symbolic mathematics (requires SymPy)
+expr = SymbolicExpression("x**2 + 2*x + 1")
+expanded = expr.expand()  # Algebraic manipulation
+derivative = expr.differentiate("x")  # 2*x + 2
+integral = expr.integrate("x")  # x**3/3 + x**2 + x
+result = expr.evaluate({"x": 5})  # 36.0
+
+# Equation solving
+solver = SymbolicSolver()
+solutions = solver.solve("x**2 - 4 = 0", "x")  # [-2, 2]
+system_solution = solver.solve_system(["x + y = 5", "x - y = 1"])  # {x: 3, y: 2}
+
+# Formula library with SQLite
+with FormulaLibrary("formulas.db") as library:
+    library.save_formula(
+        "quadratic",
+        "a*x**2 + b*x + c",
+        description="General quadratic equation",
+        tags=["algebra", "polynomial"],
+        metadata={"degree": "2"}
+    )
+    
+    # Search and load formulas
+    formulas = library.search(tag="algebra")
+    formula = library.load_formula("quadratic")
+    expr = formula["expression"]
+
+# Convert symbolic to numeric function
+f = expr.to_function()
+value = f(x=3)  # Fast numeric evaluation
+
+# Generate LaTeX for papers
+latex = expr.to_latex()  # 'x^{2} + 2 x + 1'
+
+# Matrix symbolic operations (requires SymPy)
+m = Matrix(2, 2)
+m.set(0, 0, 'a')
+m.set(0, 1, 'b')
+m.set(1, 0, 'c')
+m.set(1, 1, 'd')
+
+# Compute symbolic determinant
+det = m.symbolic_determinant()  # a*d - b*c
+
+# Compute symbolic inverse
+inv = m.symbolic_inverse()
+
+# Convert to SymPy matrix for advanced operations
+sym_matrix = m.to_symbolic()
+eigenvals = sym_matrix.eigenvals()
+
 # Logging utilities
 from io import StringIO
 from oet_core import get_logger, log, set_utils_verbose_logging, generate_matrix
@@ -128,6 +188,7 @@ oet-core/
 │   │   ├── __init__.py    # Package exports
 │   │   ├── algos.py       # Algorithm implementations (binary_search, HashMap)
 │   │   ├── mintext.py     # Text analysis (Text, Corpus)
+│   │   ├── symbolics.py   # Symbolic mathematics (SymbolicExpression)
 │   │   └── utils.py       # Utility helpers (Matrix, SQLite, logging, graphs)
 │   ├── __init__.py        # Compatibility shim for legacy imports
 │   └── utils.py           # Compatibility shim for legacy imports
@@ -141,7 +202,7 @@ oet-core/
 
 ## Running Tests
 
-Comprehensive test suite with 125+ tests covering all modules.
+Comprehensive test suite with 140+ tests covering all modules.
 
 ### Run all tests:
 
@@ -152,17 +213,19 @@ python tests/run_all_tests.py
 ### Run specific test modules:
 
 ```bash
-python tests/test_algos.py    # Test algorithms (binary_search, HashMap)
-python tests/test_mintext.py  # Test text analysis (Text, Corpus)
-python tests/test_utils.py    # Test utilities (Matrix, SQLite, validation, logging, graphs)
+python tests/test_algos.py      # Test algorithms (binary_search, HashMap)
+python tests/test_mintext.py    # Test text analysis (Text, Corpus)
+python tests/test_symbolics.py  # Test symbolic mathematics (SymbolicExpression, SymbolicSolver, FormulaLibrary, Matrix integration)
+python tests/test_utils.py      # Test utilities (Matrix, SQLite, validation, logging, graphs)
 ```
 
 **Test Coverage:**
 - **algos.py**: Binary search (scalars, pairs, duplicates, edge cases), HashMap (CRUD operations, resizing, collisions)
 - **mintext.py**: Text tokenization, frequency analysis, entropy, sentiment, vectorization, Corpus operations, SQLite persistence
+- **symbolics.py**: Expression parsing, validation, calculus (differentiation, integration, limits, series), symbolic-to-numeric conversion, LaTeX generation, equation solving (algebraic, systems, ODEs), formula library (SQLite storage, tagging, search), Matrix integration (symbolic determinants, inverses, conversions)
 - **utils.py**: Matrix operations, text validation (JSON/YAML/Markdown), SQLite helpers, logging, graph building
 
-*Note: Graph tests require `networkx` to be installed (see `requirements.txt`).*
+*Note: Graph tests require `networkx` and symbolic tests require `sympy` to be installed (see optional dependencies).*
 
 ## Documentation
 
@@ -213,6 +276,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - YAML validation support: `pip install oet-core[yaml]`
 - Graph utilities: `pip install oet-core[graph]`
+- Symbolic mathematics: `pip install oet-core[symbolic]`
 - All extras and dev tooling: `pip install oet-core[all,dev]`
 
 ---

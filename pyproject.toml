@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oet-core"
-version = "1.0.0"
+version = "1.1.0"
 description = "Lightweight data processing toolkit - algorithms, utilities, and database helpers for ETL pipelines"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.8"
@@ -12,10 +12,11 @@ license = {text = "MIT"}
 authors = [
     {name = "Markus Applegate", email = "markusapplegate27@gmail.com"}
 ]
-keywords = ["algorithms", "utilities", "data-structures", "binary-search", "hashmap", "matrix", "sqlite", "database", "etl", "data-pipeline"]
+keywords = ["algorithms", "utilities", "data-structures", "binary-search", "hashmap", "matrix", "sqlite", "database", "etl", "data-pipeline", "symbolic-math", "sympy", "text-analysis", "nlp"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -25,6 +26,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Database",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Text Processing",
 ]
 dependencies = []
 
@@ -35,9 +39,13 @@ yaml = [
 graph = [
     "networkx>=3.0",
 ]
+symbolic = [
+    "sympy>=1.12",
+]
 all = [
     "pyyaml>=6.0",
     "networkx>=3.0",
+    "sympy>=1.12",
 ]
 dev = [
     "pytest>=7.0.0",

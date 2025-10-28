@@ -26,6 +26,18 @@ from .mintext import (
     Corpus,
     set_mintext_verbose_logging,
 )
+from .symbolics import (
+    SymbolicExpression,
+    SymbolicSolver,
+    FormulaLibrary,
+    parse_expression,
+    validate_formula,
+    set_symbolics_verbose_logging,
+    matrix_to_symbolic,
+    symbolic_to_matrix,
+    symbolic_determinant,
+    symbolic_inverse,
+)
 
 __all__ = [
     "binary_search",
@@ -44,6 +56,16 @@ __all__ = [
     "Text",
     "Corpus",
     "set_mintext_verbose_logging",
+    "SymbolicExpression",
+    "SymbolicSolver",
+    "FormulaLibrary",
+    "parse_expression",
+    "validate_formula",
+    "set_symbolics_verbose_logging",
+    "matrix_to_symbolic",
+    "symbolic_to_matrix",
+    "symbolic_determinant",
+    "symbolic_inverse",
 ]
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"

@@ -93,6 +93,83 @@ class Matrix:
             for col in range(self.cols)
         ]
         return transposed
+    
+    def to_symbolic(self) -> Any:
+        """Convert this Matrix to a SymPy symbolic matrix.
+        
+        Requires SymPy to be installed. Elements that are strings will be
+        parsed as symbolic expressions.
+        
+        Returns
+        -------
+        sympy.Matrix
+            SymPy symbolic matrix representation.
+        
+        Examples
+        --------
+        >>> m = Matrix(2, 2)
+        >>> m.set(0, 0, 'x')
+        >>> m.set(0, 1, 'y')
+        >>> m.set(1, 0, 2)
+        >>> m.set(1, 1, 3)
+        >>> sym_matrix = m.to_symbolic()
+        >>> det = sym_matrix.det()  # x*3 - y*2
+        """
+        if _VERBOSE_LOGGING:
+            log("Matrix.to_symbolic called", level="info")
+        
+        from .symbolics import matrix_to_symbolic
+        return matrix_to_symbolic(self)
+    
+    def symbolic_determinant(self):
+        """Compute symbolic determinant of this matrix.
+        
+        Matrix must be square. Requires SymPy to be installed.
+        
+        Returns
+        -------
+        SymbolicExpression
+            Determinant as symbolic expression.
+        
+        Examples
+        --------
+        >>> m = Matrix(2, 2)
+        >>> m.set(0, 0, 'a')
+        >>> m.set(0, 1, 'b')
+        >>> m.set(1, 0, 'c')
+        >>> m.set(1, 1, 'd')
+        >>> det = m.symbolic_determinant()  # a*d - b*c
+        """
+        if _VERBOSE_LOGGING:
+            log("Matrix.symbolic_determinant called", level="info")
+        
+        from .symbolics import symbolic_determinant
+        return symbolic_determinant(self)
+    
+    def symbolic_inverse(self) -> "Matrix":
+        """Compute symbolic inverse of this matrix.
+        
+        Matrix must be square and invertible. Requires SymPy to be installed.
+        
+        Returns
+        -------
+        Matrix
+            Inverse matrix with symbolic expressions.
+        
+        Examples
+        --------
+        >>> m = Matrix(2, 2)
+        >>> m.set(0, 0, 'a')
+        >>> m.set(0, 1, 'b')
+        >>> m.set(1, 0, 'c')
+        >>> m.set(1, 1, 'd')
+        >>> inv = m.symbolic_inverse()
+        """
+        if _VERBOSE_LOGGING:
+            log("Matrix.symbolic_inverse called", level="info")
+        
+        from .symbolics import symbolic_inverse
+        return symbolic_inverse(self)
 
 
 def generate_matrix(

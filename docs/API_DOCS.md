@@ -20,6 +20,7 @@ pip install -e .[dev,all]
 
 - `oet_core.algos`: Binary search helpers and a pure-Python hash map.
 - `oet_core.mintext`: Text analysis primitives (Text, Corpus classes).
+- `oet_core.symbolics`: Symbolic mathematics with SymPy (SymbolicExpression, SymbolicSolver, FormulaLibrary).
 - `oet_core.utils`: Matrix helpers, SQLite wrappers, text validation, logging utilities, and graph builders.
 
 Importing from the package root re-exports the primary entry points:
@@ -28,6 +29,8 @@ Importing from the package root re-exports the primary entry points:
 from oet_core import binary_search, HashMap, Matrix, generate_matrix
 from oet_core import Text, Corpus, SQLiteHelper, create_sqlite_helper
 from oet_core import validate_block_text, get_logger, log, GraphBuilder, generate_graph
+from oet_core import SymbolicExpression, SymbolicSolver, FormulaLibrary
+from oet_core import matrix_to_symbolic, symbolic_to_matrix, symbolic_determinant, symbolic_inverse
 ```
 
 You can also import directly from submodules:
@@ -36,6 +39,7 @@ You can also import directly from submodules:
 from oet_core.algos import binary_search, HashMap
 from oet_core.mintext import Text, Corpus
 from oet_core.utils import SQLiteHelper, Matrix
+from oet_core.symbolics import SymbolicExpression, SymbolicSolver, FormulaLibrary
 ```
 
 ---
@@ -569,6 +573,245 @@ print(f"Average tokens per text: {stats['avg_tokens_per_text']:.1f}")
 db = SQLiteHelper("reviews.db")
 corpus.save_to_db(db, table="reviews")
 db.close()
+```
+
+---
+
+## Verbose Diagnostics
+
+```
+
+---
+
+## Symbolic Mathematics (`oet_core.symbolics`)
+
+The `symbolics` module provides symbolic mathematics capabilities using SymPy. Install with:
+
+```bash
+pip install oet-core[symbolic]
+# or
+pip install sympy>=1.12
+```
+
+### Core Classes
+
+#### `SymbolicExpression(expression)`
+
+Wrapper for SymPy expressions with convenient methods for manipulation and calculus.
+
+**Parameters:**
+- `expression` (`str` or SymPy expression): Mathematical expression to wrap.
+
+**Methods:**
+
+**Algebraic Manipulation:**
+- `simplify()` – Simplify expression
+- `expand()` – Expand products and powers
+- `factor()` – Factor expression
+
+**Calculus:**
+- `differentiate(*variables)` – Compute derivatives
+- `integrate(*variables, definite=False, limits=None)` – Compute integrals
+- `limit(variable, point, direction="+-")` – Compute limits
+- `taylor_series(variable, center=0, order=6)` – Taylor expansion
+
+**Evaluation:**
+- `substitute(substitutions)` – Substitute symbolic/numeric values
+- `evaluate(values)` – Evaluate to numeric result
+- `to_function(variables=None)` – Convert to callable Python function
+
+**Conversion:**
+- `to_latex()` – Convert to LaTeX string
+- `to_string()` – Convert to string representation
+- `get_variables()` – Extract all variable names
+
+```python
+from oet_core import SymbolicExpression
+
+# Create and manipulate expressions
+expr = SymbolicExpression("x**2 + 2*x + 1")
+factored = expr.factor()  # (x + 1)**2
+expanded = expr.expand()
+
+# Calculus
+derivative = expr.differentiate("x")  # 2*x + 2
+integral = expr.integrate("x")  # x**3/3 + x**2 + x
+
+# Definite integral
+area = expr.integrate("x", definite=True, limits={"x": (0, 1)})
+
+# Evaluation
+result = expr.evaluate({"x": 5})  # 36.0
+
+# Convert to function for fast numeric evaluation
+f = expr.to_function()
+values = [f(x=i) for i in range(10)]
+
+# LaTeX for papers
+latex = expr.to_latex()  # 'x^{2} + 2 x + 1'
+```
+
+#### `SymbolicSolver()`
+
+Solve algebraic equations, systems of equations, and differential equations.
+
+**Methods:**
+- `solve(equation, variable=None)` – Solve single equation
+- `solve_system(equations, variables=None)` – Solve system of equations
+- `solve_ode(equation, function, variable)` – Solve ordinary differential equation
+
+```python
+from oet_core import SymbolicSolver
+
+solver = SymbolicSolver()
+
+# Solve algebraic equation
+solutions = solver.solve("x**2 - 4 = 0", "x")  # [-2, 2]
+
+# Solve system
+result = solver.solve_system([
+    "x + y = 5",
+    "x - y = 1"
+])  # {x: 3, y: 2}
+
+# System with 3 variables
+result = solver.solve_system([
+    "x + y + z = 6",
+    "2*x - y + z = 3",
+    "x + 2*y - z = 1"
+], ["x", "y", "z"])
+```
+
+#### `FormulaLibrary(db_path)`
+
+SQLite-based storage for mathematical formulas with tagging and metadata.
+
+**Parameters:**
+- `db_path` (`str`): Path to SQLite database (use `:memory:` for in-memory).
+
+**Methods:**
+- `save_formula(name, formula, description="", tags=None, metadata=None, overwrite=False)`
+- `load_formula(name)` – Returns dict with `name`, `formula`, `description`, `tags`, `metadata`, `expression`
+- `search(name_pattern=None, tag=None, metadata_key=None, metadata_value=None)` – Search formulas
+- `list_formulas()` – Get all formula names
+- `delete_formula(name)` – Delete formula and related data
+- `close()` – Close database connection
+
+```python
+from oet_core import FormulaLibrary
+
+# Use context manager for automatic cleanup
+with FormulaLibrary("physics.db") as lib:
+    # Save formulas with metadata
+    lib.save_formula(
+        "kinetic_energy",
+        "(1/2)*m*v**2",
+        description="Kinetic energy formula",
+        tags=["physics", "mechanics", "energy"],
+        metadata={"units": "joules", "variables": "m,v"}
+    )
+    
+    lib.save_formula(
+        "force",
+        "m*a",
+        description="Newton's second law",
+        tags=["physics", "mechanics"],
+        metadata={"units": "newtons"}
+    )
+    
+    # Search by tag
+    energy_formulas = lib.search(tag="energy")
+    
+    # Search by metadata
+    joule_formulas = lib.search(metadata_key="units", metadata_value="joules")
+    
+    # Load and use formula
+    data = lib.load_formula("kinetic_energy")
+    expr = data["expression"]  # SymbolicExpression object
+    ke_func = expr.to_function()
+    energy = ke_func(m=10, v=5)  # Calculate: 125.0 J
+```
+
+### Matrix Integration
+
+The symbolics module integrates with oet-core's Matrix class for symbolic linear algebra.
+
+**Functions:**
+- `matrix_to_symbolic(matrix)` – Convert Matrix → SymPy Matrix
+- `symbolic_to_matrix(sym_matrix)` – Convert SymPy Matrix → Matrix
+- `symbolic_determinant(matrix)` – Compute symbolic determinant
+- `symbolic_inverse(matrix)` – Compute symbolic inverse
+
+**Matrix Methods:**
+- `Matrix.to_symbolic()` – Convert to SymPy matrix
+- `Matrix.symbolic_determinant()` – Compute determinant symbolically
+- `Matrix.symbolic_inverse()` – Compute inverse symbolically
+
+```python
+from oet_core import Matrix, matrix_to_symbolic
+
+# Create matrix with symbolic elements
+m = Matrix(2, 2)
+m.set(0, 0, 'a')
+m.set(0, 1, 'b')
+m.set(1, 0, 'c')
+m.set(1, 1, 'd')
+
+# Symbolic determinant
+det = m.symbolic_determinant()  # a*d - b*c
+print(det.simplify())
+
+# Symbolic inverse
+inv = m.symbolic_inverse()
+print(inv.get(0, 0))  # 'd/(a*d - b*c)'
+
+# Convert to SymPy for advanced operations
+sym_matrix = m.to_symbolic()
+eigenvals = sym_matrix.eigenvals()
+eigenvects = sym_matrix.eigenvects()
+
+# Numeric example
+m2 = Matrix(2, 2)
+m2.set(0, 0, 4)
+m2.set(0, 1, 3)
+m2.set(1, 0, 2)
+m2.set(1, 1, 1)
+
+det = m2.symbolic_determinant()
+result = det.evaluate({})  # -2.0
+
+inv = m2.symbolic_inverse()
+# Inverse is [[-1/2, 3/2], [1, -2]]
+```
+
+### Utility Functions
+
+**`parse_expression(expr_str)`** – Parse string to SymPy expression
+
+```python
+from oet_core import parse_expression
+
+expr = parse_expression("sin(x)**2 + cos(x)**2")
+```
+
+**`validate_formula(formula)`** – Validate mathematical expression
+
+```python
+from oet_core import validate_formula
+
+valid, error = validate_formula("x**2 + 2*x + 1")
+if valid:
+    print("Valid formula!")
+```
+
+**`set_symbolics_verbose_logging(enabled)`** – Enable diagnostic logging
+
+```python
+from oet_core import set_symbolics_verbose_logging, SymbolicExpression
+
+set_symbolics_verbose_logging(True)
+expr = SymbolicExpression("x**2")
+# Logs: SymbolicExpression.__init__ called with expression=x**2
 ```
 
 ---
