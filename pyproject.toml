@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oet-core"
-version = "1.1.0"
-description = "Lightweight data processing toolkit - algorithms, utilities, and database helpers for ETL pipelines"
+version = "1.2.0"
+description = "Lightweight data processing toolkit with algorithms, symbolic math (with arithmetic operators), text analysis, and database helpers for ETL pipelines"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.8"
 license = {text = "MIT"}

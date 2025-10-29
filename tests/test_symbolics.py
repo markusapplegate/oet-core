@@ -276,6 +276,143 @@ class TestSymbolicExpression(unittest.TestCase):
         expr2 = SymbolicExpression("x**3")
         self.assertNotEqual(expr1, expr2)
 
+    def test_addition(self):
+        from oet_core import SymbolicExpression
+        expr1 = SymbolicExpression("x")
+        expr2 = SymbolicExpression("y")
+        result = expr1 + expr2
+        self.assertIsInstance(result, SymbolicExpression)
+        self.assertEqual(str(result), "x + y")
+
+    def test_addition_with_number(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = expr + 5
+        self.assertEqual(str(result), "x + 5")
+
+    def test_right_addition(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = 3 + expr
+        self.assertEqual(str(result), "x + 3")
+
+    def test_subtraction(self):
+        from oet_core import SymbolicExpression
+        expr1 = SymbolicExpression("x")
+        expr2 = SymbolicExpression("y")
+        result = expr1 - expr2
+        self.assertEqual(str(result), "x - y")
+
+    def test_subtraction_with_number(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = expr - 2
+        self.assertEqual(str(result), "x - 2")
+
+    def test_right_subtraction(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = 10 - expr
+        self.assertEqual(str(result), "10 - x")
+
+    def test_multiplication(self):
+        from oet_core import SymbolicExpression
+        expr1 = SymbolicExpression("x")
+        expr2 = SymbolicExpression("y")
+        result = expr1 * expr2
+        self.assertEqual(str(result), "x*y")
+
+    def test_multiplication_with_number(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = expr * 3
+        self.assertEqual(str(result), "3*x")
+
+    def test_right_multiplication(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = 5 * expr
+        self.assertEqual(str(result), "5*x")
+
+    def test_division(self):
+        from oet_core import SymbolicExpression
+        expr1 = SymbolicExpression("x")
+        expr2 = SymbolicExpression("y")
+        result = expr1 / expr2
+        self.assertEqual(str(result), "x/y")
+
+    def test_division_with_number(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = expr / 2
+        self.assertEqual(str(result), "x/2")
+
+    def test_right_division(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = 12 / expr
+        self.assertEqual(str(result), "12/x")
+
+    def test_power(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = expr ** 2
+        self.assertEqual(str(result), "x**2")
+
+    def test_power_with_expression(self):
+        from oet_core import SymbolicExpression
+        expr1 = SymbolicExpression("x")
+        expr2 = SymbolicExpression("y")
+        result = expr1 ** expr2
+        self.assertEqual(str(result), "x**y")
+
+    def test_right_power(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = 2 ** expr
+        self.assertEqual(str(result), "2**x")
+
+    def test_negation(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = -expr
+        self.assertEqual(str(result), "-x")
+
+    def test_positive(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = +expr
+        self.assertEqual(str(result), "x")
+
+    def test_absolute_value(self):
+        from oet_core import SymbolicExpression
+        expr = SymbolicExpression("x")
+        result = abs(expr)
+        # SymPy represents abs as Abs
+        self.assertIn("Abs", str(result) + str(result.expr))
+
+    def test_complex_expression(self):
+        from oet_core import SymbolicExpression
+        x = SymbolicExpression("x")
+        y = SymbolicExpression("y")
+        # Build (x + y)**2 using operators
+        result = (x + y) ** 2
+        expanded = result.expand()
+        # Should expand to x**2 + 2*x*y + y**2
+        expanded_str = str(expanded)
+        self.assertIn("x**2", expanded_str)
+        self.assertIn("y**2", expanded_str)
+        self.assertIn("x*y", expanded_str)
+
+    def test_arithmetic_with_evaluate(self):
+        from oet_core import SymbolicExpression
+        x = SymbolicExpression("x")
+        expr = (x + 3) * (x - 2)
+        expanded = expr.expand()
+        result = expanded.evaluate({"x": 5})
+        # (5+3)*(5-2) = 8*3 = 24
+        self.assertEqual(result, 24.0)
+
 
 @skipIfNoSympy
 class TestVerboseLogging(unittest.TestCase):

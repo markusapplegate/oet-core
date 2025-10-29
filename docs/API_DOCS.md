@@ -4,12 +4,27 @@ Complete reference for the `oet-core` package.
 
 ## Installation
 
+**Basic installation** (no dependencies):
 ```bash
 pip install oet-core
 ```
 
-For local development with optional extras:
+**With optional features:**
+```bash
+# For symbolic mathematics
+pip install oet-core[symbolic]
 
+# For YAML support
+pip install oet-core[yaml]
+
+# For graph utilities
+pip install oet-core[graph]
+
+# Everything
+pip install oet-core[all]
+```
+
+**For local development:**
 ```bash
 git clone https://github.com/markusapplegate/oet-core.git
 cd oet-core
@@ -20,7 +35,7 @@ pip install -e .[dev,all]
 
 - `oet_core.algos`: Binary search helpers and a pure-Python hash map.
 - `oet_core.mintext`: Text analysis primitives (Text, Corpus classes).
-- `oet_core.symbolics`: Symbolic mathematics with SymPy (SymbolicExpression, SymbolicSolver, FormulaLibrary).
+- `oet_core.symbolics`: Symbolic mathematics with SymPy (**requires** `pip install oet-core[symbolic]`)
 - `oet_core.utils`: Matrix helpers, SQLite wrappers, text validation, logging utilities, and graph builders.
 
 Importing from the package root re-exports the primary entry points:
@@ -29,6 +44,8 @@ Importing from the package root re-exports the primary entry points:
 from oet_core import binary_search, HashMap, Matrix, generate_matrix
 from oet_core import Text, Corpus, SQLiteHelper, create_sqlite_helper
 from oet_core import validate_block_text, get_logger, log, GraphBuilder, generate_graph
+
+# Symbolic math (requires: pip install oet-core[symbolic])
 from oet_core import SymbolicExpression, SymbolicSolver, FormulaLibrary
 from oet_core import matrix_to_symbolic, symbolic_to_matrix, symbolic_determinant, symbolic_inverse
 ```
@@ -585,12 +602,20 @@ db.close()
 
 ## Symbolic Mathematics (`oet_core.symbolics`)
 
-The `symbolics` module provides symbolic mathematics capabilities using SymPy. Install with:
+**⚠️ Installation Required:** The symbolics module requires SymPy. Install with:
 
 ```bash
 pip install oet-core[symbolic]
-# or
+```
+
+Or directly:
+```bash
 pip install sympy>=1.12
+```
+
+If you try to use symbolic features without SymPy installed, you'll see:
+```
+ImportError: SymPy is required for symbolic operations. Install with: pip install oet-core[symbolic]
 ```
 
 ### Core Classes
@@ -609,6 +634,31 @@ Wrapper for SymPy expressions with convenient methods for manipulation and calcu
 - `expand()` – Expand products and powers
 - `factor()` – Factor expression
 
+**Arithmetic Operators (NEW!):**
+
+Build symbolic expressions programmatically using standard Python operators instead of only string parsing. This makes it easy to construct complex formulas dynamically:
+
+| Operator | Syntax | Example | Result |
+|----------|--------|---------|--------|
+| Addition | `expr1 + expr2` | `x + y` | `x + y` |
+| | `expr + number` | `x + 5` | `x + 5` |
+| | `number + expr` | `3 + x` | `x + 3` |
+| Subtraction | `expr1 - expr2` | `x - y` | `x - y` |
+| | `expr - number` | `x - 2` | `x - 2` |
+| | `number - expr` | `10 - x` | `10 - x` |
+| Multiplication | `expr1 * expr2` | `x * y` | `x*y` |
+| | `expr * number` | `x * 3` | `3*x` |
+| | `number * expr` | `5 * x` | `5*x` |
+| Division | `expr1 / expr2` | `x / y` | `x/y` |
+| | `expr / number` | `x / 2` | `x/2` |
+| | `number / expr` | `12 / x` | `12/x` |
+| Power | `expr1 ** expr2` | `x ** y` | `x**y` |
+| | `expr ** number` | `x ** 2` | `x**2` |
+| | `number ** expr` | `2 ** x` | `2**x` |
+| Negation | `-expr` | `-x` | `-x` |
+| Unary Plus | `+expr` | `+x` | `x` |
+| Absolute | `abs(expr)` | `abs(x)` | `Abs(x)` |
+
 **Calculus:**
 - `differentiate(*variables)` – Compute derivatives
 - `integrate(*variables, definite=False, limits=None)` – Compute integrals
@@ -625,6 +675,8 @@ Wrapper for SymPy expressions with convenient methods for manipulation and calcu
 - `to_string()` – Convert to string representation
 - `get_variables()` – Extract all variable names
 
+**Examples:**
+
 ```python
 from oet_core import SymbolicExpression
 
@@ -632,6 +684,17 @@ from oet_core import SymbolicExpression
 expr = SymbolicExpression("x**2 + 2*x + 1")
 factored = expr.factor()  # (x + 1)**2
 expanded = expr.expand()
+
+# Build expressions using operators (NEW!)
+x = SymbolicExpression("x")
+y = SymbolicExpression("y")
+expr = (x + y) ** 2  # Build (x + y)**2 programmatically
+expanded = expr.expand()  # x**2 + 2*x*y + y**2
+
+# Mix operators with methods
+result = (x + 3) * (x - 2)
+expanded = result.expand()  # x**2 + x - 6
+value = expanded.evaluate({"x": 5})  # 24.0
 
 # Calculus
 derivative = expr.differentiate("x")  # 2*x + 2

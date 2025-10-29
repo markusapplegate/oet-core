@@ -560,6 +560,112 @@ class SymbolicExpression:
             sp = _import_sympy()
             return sp.simplify(self.expr - other.expr) == 0
         return False
+    
+    def __add__(self, other: Union["SymbolicExpression", int, float]) -> "SymbolicExpression":
+        """Addition operator: self + other."""
+        _log_if_verbose(f"SymbolicExpression.__add__ called with other={other}")
+        
+        if isinstance(other, SymbolicExpression):
+            return SymbolicExpression(self.expr + other.expr)
+        elif isinstance(other, (int, float)):
+            return SymbolicExpression(self.expr + other)
+        else:
+            return NotImplemented
+    
+    def __radd__(self, other: Union[int, float]) -> "SymbolicExpression":
+        """Right addition operator: other + self."""
+        return self.__add__(other)
+    
+    def __sub__(self, other: Union["SymbolicExpression", int, float]) -> "SymbolicExpression":
+        """Subtraction operator: self - other."""
+        _log_if_verbose(f"SymbolicExpression.__sub__ called with other={other}")
+        
+        if isinstance(other, SymbolicExpression):
+            return SymbolicExpression(self.expr - other.expr)
+        elif isinstance(other, (int, float)):
+            return SymbolicExpression(self.expr - other)
+        else:
+            return NotImplemented
+    
+    def __rsub__(self, other: Union[int, float]) -> "SymbolicExpression":
+        """Right subtraction operator: other - self."""
+        _log_if_verbose(f"SymbolicExpression.__rsub__ called with other={other}")
+        
+        if isinstance(other, (int, float)):
+            return SymbolicExpression(other - self.expr)
+        else:
+            return NotImplemented
+    
+    def __mul__(self, other: Union["SymbolicExpression", int, float]) -> "SymbolicExpression":
+        """Multiplication operator: self * other."""
+        _log_if_verbose(f"SymbolicExpression.__mul__ called with other={other}")
+        
+        if isinstance(other, SymbolicExpression):
+            return SymbolicExpression(self.expr * other.expr)
+        elif isinstance(other, (int, float)):
+            return SymbolicExpression(self.expr * other)
+        else:
+            return NotImplemented
+    
+    def __rmul__(self, other: Union[int, float]) -> "SymbolicExpression":
+        """Right multiplication operator: other * self."""
+        return self.__mul__(other)
+    
+    def __truediv__(self, other: Union["SymbolicExpression", int, float]) -> "SymbolicExpression":
+        """Division operator: self / other."""
+        _log_if_verbose(f"SymbolicExpression.__truediv__ called with other={other}")
+        
+        if isinstance(other, SymbolicExpression):
+            return SymbolicExpression(self.expr / other.expr)
+        elif isinstance(other, (int, float)):
+            return SymbolicExpression(self.expr / other)
+        else:
+            return NotImplemented
+    
+    def __rtruediv__(self, other: Union[int, float]) -> "SymbolicExpression":
+        """Right division operator: other / self."""
+        _log_if_verbose(f"SymbolicExpression.__rtruediv__ called with other={other}")
+        
+        if isinstance(other, (int, float)):
+            return SymbolicExpression(other / self.expr)
+        else:
+            return NotImplemented
+    
+    def __pow__(self, other: Union["SymbolicExpression", int, float]) -> "SymbolicExpression":
+        """Power operator: self ** other."""
+        _log_if_verbose(f"SymbolicExpression.__pow__ called with other={other}")
+        
+        if isinstance(other, SymbolicExpression):
+            return SymbolicExpression(self.expr ** other.expr)
+        elif isinstance(other, (int, float)):
+            return SymbolicExpression(self.expr ** other)
+        else:
+            return NotImplemented
+    
+    def __rpow__(self, other: Union[int, float]) -> "SymbolicExpression":
+        """Right power operator: other ** self."""
+        _log_if_verbose(f"SymbolicExpression.__rpow__ called with other={other}")
+        
+        if isinstance(other, (int, float)):
+            return SymbolicExpression(other ** self.expr)
+        else:
+            return NotImplemented
+    
+    def __neg__(self) -> "SymbolicExpression":
+        """Negation operator: -self."""
+        _log_if_verbose("SymbolicExpression.__neg__ called")
+        return SymbolicExpression(-self.expr)
+    
+    def __pos__(self) -> "SymbolicExpression":
+        """Unary plus operator: +self."""
+        _log_if_verbose("SymbolicExpression.__pos__ called")
+        return SymbolicExpression(+self.expr)
+    
+    def __abs__(self) -> "SymbolicExpression":
+        """Absolute value operator: abs(self)."""
+        _log_if_verbose("SymbolicExpression.__abs__ called")
+        sp = _import_sympy()
+        return SymbolicExpression(sp.Abs(self.expr))
 
 
 class SymbolicSolver:

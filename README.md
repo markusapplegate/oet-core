@@ -32,6 +32,7 @@ Originally developed to support the Outer Element Taxonomy research framework, t
 
 **Symbolic Mathematics (Symbolics)**
 - **SymbolicExpression**: Expression manipulation, simplification, expansion, factoring
+- **Arithmetic Operators**: Build expressions programmatically with `+`, `-`, `*`, `/`, `**`
 - **Calculus**: Differentiation, integration, limits, Taylor series
 - **SymbolicSolver**: Solve algebraic equations, systems of equations, and ODEs
 - **FormulaLibrary**: SQLite-based formula storage with tagging and search
@@ -48,12 +49,36 @@ Originally developed to support the Outer Element Taxonomy research framework, t
 
 ### Installation
 
+**Basic installation** (no dependencies):
 ```bash
 pip install oet-core
 ```
 
-For local development with optional features:
+This gives you core functionality: algorithms, data structures, matrix operations, SQLite helpers, text analysis, and logging.
 
+**Install with optional features:**
+
+For symbolic mathematics (SymbolicExpression, equation solving, calculus):
+```bash
+pip install oet-core[symbolic]
+```
+
+For YAML validation:
+```bash
+pip install oet-core[yaml]
+```
+
+For graph generation (NetworkX):
+```bash
+pip install oet-core[graph]
+```
+
+For everything:
+```bash
+pip install oet-core[all]
+```
+
+**For local development:**
 ```bash
 git clone https://github.com/markusapplegate/oet-core.git
 cd oet-core
@@ -64,7 +89,6 @@ pip install -e .[dev,all]
 
 ```python
 from oet_core import binary_search, HashMap, Matrix, SQLiteHelper, Text, Corpus
-from oet_core import SymbolicExpression, SymbolicSolver, FormulaLibrary
 
 # Binary search
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -104,13 +128,35 @@ vectors = corpus.vectorize_all()  # Convert to term-frequency matrix
 with SQLiteHelper(":memory:") as db:
     corpus.save_to_db(db, table="reviews")  # Persist to SQLite
     loaded = Corpus.load_from_db(db, table="reviews")
+```
 
-# Symbolic mathematics (requires SymPy)
+### Symbolic Mathematics
+
+**Install symbolic math support first:**
+```bash
+pip install oet-core[symbolic]
+```
+
+**Then use it:**
+```python
+from oet_core import SymbolicExpression, SymbolicSolver, FormulaLibrary
+
+# Parse and manipulate expressions
 expr = SymbolicExpression("x**2 + 2*x + 1")
 expanded = expr.expand()  # Algebraic manipulation
 derivative = expr.differentiate("x")  # 2*x + 2
 integral = expr.integrate("x")  # x**3/3 + x**2 + x
 result = expr.evaluate({"x": 5})  # 36.0
+
+# Build expressions with arithmetic operators (new in 1.2.0!)
+x = SymbolicExpression("x")
+y = SymbolicExpression("y")
+expr = (x + y) ** 2  # Programmatic expression building
+expanded = expr.expand()  # x**2 + 2*x*y + y**2
+
+quadratic = (x + 3) * (x - 2)
+expanded_quad = quadratic.expand()  # x**2 + x - 6
+result = expanded_quad.evaluate({"x": 5})  # 24.0
 
 # Equation solving
 solver = SymbolicSolver()
@@ -171,6 +217,13 @@ generate_matrix(1, 1)
 set_utils_verbose_logging(False)
 ```
 
+## Documentation
+
+- **[API_DOCS.md](docs/API_DOCS.md)** - Complete API reference with examples
+- **[ARITHMETIC_OPERATORS.md](docs/ARITHMETIC_OPERATORS.md)** - Quick reference for symbolic expression operators
+- **[MINTEXT_GUIDE.md](docs/MINTEXT_GUIDE.md)** - MinText text analysis guide
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+
 ## Project Structure
 
 ```
@@ -178,6 +231,7 @@ oet-core/
 ├── README.md              # This file
 ├── docs/
 │   ├── API_DOCS.md        # Complete API documentation
+│   ├── ARITHMETIC_OPERATORS.md  # Symbolic operators quick reference
 │   └── MINTEXT_GUIDE.md   # MinText quick reference
 ├── CONTRIBUTING.md        # Contribution guidelines
 ├── LICENSE                # MIT License
@@ -227,11 +281,6 @@ python tests/test_utils.py      # Test utilities (Matrix, SQLite, validation, lo
 
 *Note: Graph tests require `networkx` and symbolic tests require `sympy` to be installed (see optional dependencies).*
 
-## Documentation
-
-- **[API_DOCS.md](docs/API_DOCS.md)** - Complete API reference with examples
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
-
 ## Design Philosophy
 
 **Built for research workflows:**
@@ -274,10 +323,27 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Optional Dependencies
 
-- YAML validation support: `pip install oet-core[yaml]`
-- Graph utilities: `pip install oet-core[graph]`
-- Symbolic mathematics: `pip install oet-core[symbolic]`
-- All extras and dev tooling: `pip install oet-core[all,dev]`
+**oet-core has zero required dependencies** - the core library uses only Python's standard library.
+
+Optional features require additional packages:
+
+| Feature | Install Command | Adds |
+|---------|----------------|------|
+| **Symbolic Math** | `pip install oet-core[symbolic]` | SymPy for expression manipulation, calculus, equation solving |
+| **YAML Support** | `pip install oet-core[yaml]` | PyYAML for YAML validation |
+| **Graph Utilities** | `pip install oet-core[graph]` | NetworkX for graph generation |
+| **All Features** | `pip install oet-core[all]` | Everything above |
+| **Development** | `pip install oet-core[dev]` | pytest, pytest-cov for testing |
+
+**Example: Installing with symbolic math only:**
+```bash
+pip install oet-core[symbolic]
+```
+
+**Example: Installing everything for development:**
+```bash
+pip install oet-core[all,dev]
+```
 
 ---
 

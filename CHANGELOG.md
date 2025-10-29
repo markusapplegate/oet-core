@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.2.0] - 2025-10-28
+
+### Added
+- **Arithmetic Operator Overloading** for `SymbolicExpression`:
+  - `+`, `-`, `*`, `/`, `**` operators for building expressions programmatically
+  - Support for mixed operations with numbers (e.g., `expr + 5`, `3 * expr`)
+  - Right-side operators (`__radd__`, `__rsub__`, etc.) for natural syntax
+  - Unary operators: `-expr` (negation), `+expr` (positive), `abs(expr)` (absolute value)
+  - Enables intuitive expression building: `(x + y) ** 2` instead of only string parsing
+- 20 comprehensive tests for arithmetic operators with various combinations
+- New documentation: `ARITHMETIC_OPERATORS.md` - Quick reference guide for symbolic operators
+
+### Fixed
+- Critical usability gap: `SymbolicExpression` now supports basic arithmetic operations
+- Users can now build symbolic expressions programmatically instead of only using strings
+
 ## [1.1.0] - 2025-10-28
 
 ### Added
@@ -40,5 +58,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Notes
 - Initial public release of `oet-core`
 
+[1.2.0]: https://github.com/markusapplegate/oet-core/releases/tag/v1.2.0
 [1.1.0]: https://github.com/markusapplegate/oet-core/releases/tag/v1.1.0
 [1.0.0]: https://github.com/markusapplegate/oet-core/releases/tag/v1.0.0
